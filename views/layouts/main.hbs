@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Page Title -->
+    <title>{{title}} - {{getConfig 'app.fullName'}}</title>
+
+    <!-- META Info -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link rel="apple-touch-icon" href="/public/img/app.png">
+
+    <!-- Style Import -->
+    <link rel="stylesheet" href="{{ROOT_DIR}}/public/css/material-design-icons.css">
+    <link rel="stylesheet" href="{{ROOT_DIR}}/public/css/materialize.min.css">
+    <link rel="stylesheet" href="{{ROOT_DIR}}/public/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ROOT_DIR}}/public/css/roboto-condensed/index.css">
+    <link rel="stylesheet" href="{{ROOT_DIR}}/public/css/style.css">
+
+    <!-- JS Import -->
+    <script src="{{ROOT_DIR}}/public/js/jquery.min.js"></script>
+    <script src="{{ROOT_DIR}}/public/js/materialize.min.js"></script>
+    <script src="{{ROOT_DIR}}/public/js/moment-with-locales.min.js"></script>
+    <script src="{{ROOT_DIR}}/public/js/ios-fixer.js"></script>
+    <script src="{{ROOT_DIR}}/public/js/ajax.js"></script>
+    <script src="{{ROOT_DIR}}/public/js/custom.js"></script>
+</head>
+<body>
+{{> nav}}
+
+<div class="container">{{{body}}}</div>
+
+{{> footer}}
+</body>
+</html>

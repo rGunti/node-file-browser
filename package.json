@@ -11,5 +11,24 @@
     "email": "raphael@rgunti.ch",
     "url": "http://rgunti.ch"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "config": "^1.28.1",
+    "cookie-parser": "^1.4.3",
+    "debug": "^3.1.0",
+    "express": "^4.16.2",
+    "express-hbs": "^1.0.4",
+    "font-awesome": "^4.7.0",
+    "handlebars-helpers": "^0.10.0",
+    "jquery": "^3.2.1",
+    "js-yaml": "^3.10.0",
+    "material-design-icons-iconfont": "^3.0.3",
+    "materialize-css": "^0.100.2",
+    "moment": "^2.19.3",
+    "moment-duration-format": "^1.3.0",
+    "morgan": "^1.9.0",
+    "supports-color": "^5.0.1",
+    "typeface-roboto-condensed": "0.0.45"
+  }
 }

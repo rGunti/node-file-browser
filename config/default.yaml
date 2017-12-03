@@ -1,0 +1,15 @@
+app:
+  fullName: File Browser
+  shortName: Files
+  instance: dev
+server:
+  port: 5050
+internals:
+  dirs:
+    views: /views
+    hbs:
+      partials: /views/partials
+      layouts: /views/layouts
+      defaultLayout: /views/layouts/main.hbs
+    routes: /config/routes.json
+    staticRoutes: /config/static-routes.json
