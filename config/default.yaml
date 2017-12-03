@@ -4,6 +4,9 @@ app:
   instance: dev
 server:
   port: 5050
+  upload:
+    destination: R:/
+    limit: 104857600
 internals:
   dirs:
     views: /views

@@ -18,6 +18,7 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const multer = require('multer');
 const HandleRender = require('./ui/handlebar-renderer');
 const HandleHelpers = require('./ui/handlebar-helpers');
 
@@ -41,9 +42,10 @@ app.set('view engine', 'hbs');
 
 debug('Configuring middleware...');
 app.use(logger('dev'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: config.get('server.upload.limit') }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.enable('trust proxy');
 
 debug('Configuring static resource routes...');
 const staticRoutes = require(path.join(__dirname, config.get('internals.dirs.staticRoutes')));
