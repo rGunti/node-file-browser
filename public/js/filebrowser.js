@@ -12,7 +12,6 @@
 const FileBrowser = {
     settings: {
         renderTarget: '#renderTarget',
-        filePathTarget: '#currentBrowserPath',
         templates: {
             file: '#fileTemplate',
             folder: '#folderTemplate',
@@ -43,6 +42,9 @@ const FileBrowser = {
         FileBrowser.currentPath = FileBrowser.cleanupPath(path);
         $(FileBrowser.settings.filePathTarget).text(FileBrowser.currentPath);
         window.location.hash = '#' + FileBrowser.currentPath;
+
+        $('.brand-logo').text(FileBrowser.currentPath);
+        $('.brand-logo-small').text(FileBrowser.currentPath.split('/').slice(-1).pop() || '/');
     },
     _ajax: function(path) {
         LoadingIndicator.show();
@@ -133,11 +135,17 @@ const FileBrowser = {
 };
 
 $(document).ready(function() {
-    $('#navigateBackButton').click(function(e) {
+    $('.navigate-back-button').click(function(e) {
         FileBrowser.navigateBack();
+        $('.button-collapse').sideNav('hide');
     });
-    $('#reloadButton').click(function(e) {
+    $('.reload-button').click(function(e) {
         FileBrowser.navigateTo(FileBrowser.currentPath);
+        $('.button-collapse').sideNav('hide');
+    });
+    $('.nav-to-root-button').click(function(e) {
+        FileBrowser.navigateTo('/');
+        $('.button-collapse').sideNav('hide');
     });
     FileBrowser.init();
 });

@@ -44,3 +44,6 @@ samp.break-all {
 .hidden {
     display: none;
 }
+nav .button-collapse {
+    margin: 0;
+}
