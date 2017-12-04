@@ -20,21 +20,27 @@ const async = require('async');
 const router = require('express').Router();
 const ROOT = config.get('app.filebrowser.basePath');
 
-function sendFileBrowserResponse(res, files, err) {
+function sendFileBrowserResponse(res, path, files, err) {
     res.json({
         ok: (!err),
         error: err,
         fileCount: Object.keys(files).length,
-        files: files
+        files: files,
+        path: path
     })
 }
 
 router.get('/', (req, res) => {
-    let scanDir = (req.query.path ? path.join(ROOT, req.query.path) : ROOT);
+    let scanDir = ROOT;
+    if (req.query.path) {
+        let queryPath = req.query.path;
+        let pathArr = queryPath.split('/').filter((i) => { return !!i && i !== '..'; });
+        scanDir = path.join(ROOT, pathArr.join('/'));
+    }
     fs.readdir(scanDir, (err, files) => {
         let collection = {};
         if (err) {
-            sendFileBrowserResponse(res, collection, err);
+            sendFileBrowserResponse(res, scanDir, collection, err);
         } else {
             async.eachLimit(files, 10, (item, callback) => {
                 fs.stat(path.join(scanDir, item), (err, stats) => {
@@ -47,7 +53,7 @@ router.get('/', (req, res) => {
                     callback();
                 });
             }, (err) => {
-                sendFileBrowserResponse(res, collection, err);
+                sendFileBrowserResponse(res, scanDir, collection, err);
             });
         }
     });
