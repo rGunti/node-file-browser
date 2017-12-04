@@ -20,9 +20,15 @@ const FileBrowser = {
         },
         showErrorItems: false,
         api: {
-            url: '/api/filebrowser',
-            method: 'get',
-            dataPathArgument: 'path'
+            url: {
+                index: ['/api/filebrowser', 'get'],
+                createDir: ['/api/filebrowser/create-dir', 'post'],
+                upload: ['/api/filebrowser/upload', 'post']
+            },
+            args: {
+                path: 'path',
+                newDirName: 'newDirName'
+            }
         }
     },
     currentPath: '/',
@@ -40,19 +46,18 @@ const FileBrowser = {
     },
     setPath: function(path) {
         FileBrowser.currentPath = FileBrowser.cleanupPath(path);
-        $(FileBrowser.settings.filePathTarget).text(FileBrowser.currentPath);
         window.location.hash = '#' + FileBrowser.currentPath;
 
         $('.brand-logo').text(FileBrowser.currentPath);
-        $('.brand-logo-small').text(FileBrowser.currentPath.split('/').slice(-1).pop() || '/');
+        $('.brand-logo-small').text((FileBrowser.currentPath.split('/').slice(-1).pop() || '/').substr(0, 15));
     },
     _ajax: function(path) {
         LoadingIndicator.show();
         let data = {};
-        data[FileBrowser.settings.api.dataPathArgument] = path;
+        data[FileBrowser.settings.api.args.path] = path;
         simpleAjax(
-            FileBrowser.settings.api.url,
-            FileBrowser.settings.api.method,
+            FileBrowser.settings.api.url.index[0],
+            FileBrowser.settings.api.url.index[1],
             data,
             function(res) {
                 FileBrowser._render(path, res);
@@ -131,10 +136,115 @@ const FileBrowser = {
     onFileClick: function(e) {
     },
     onFolderClick: function(e) {
+    },
+    createDirectory: function(dirname) {
+        LoadingIndicator.show();
+        let data = {};
+        data[FileBrowser.settings.api.args.path] = FileBrowser.currentPath;
+        data[FileBrowser.settings.api.args.newDirName] = dirname;
+        simpleAjax(
+            FileBrowser.settings.api.url.createDir[0],
+            FileBrowser.settings.api.url.createDir[1],
+            data,
+            function(res) {
+                $('#createFolderName').val('');
+                $('#createFolderModal').modal('close');
+                FileBrowser.navigateTo(FileBrowser.currentPath);
+            },
+            function(e) {
+                LoadingIndicator.hide();
+                if (e.response && e.response.error) {
+                    Materialize.toast('Could not create directory! It might already exist.', 2500);
+                }
+            }
+        );
+    },
+    uploadFile: function() {
+        var modal = $('#uploadProgressModal');
+        var lastBytes = null;
+        var lastTime = null;
+        var xhr = uploadAjaxFile(
+            FileBrowser.settings.api.url.upload[0] + '?path=' + encodeURIComponent(FileBrowser.currentPath),
+            FileBrowser.settings.api.url.upload[1],
+            'uploadFile',
+            function(e) {
+                // On Progress
+                if (e.lengthComputable) {
+                    var percentage = (e.loaded / e.total) * 100;
+                    var remaining = e.total - e.loaded;
+                    var speed = 0;
+                    var eta = 0;
+                    if (lastBytes) {
+                        var timeDelta = Math.max(1, new Date() - lastTime);
+                        var byteDelta = e.loaded - lastBytes;
+                        speed = (byteDelta / timeDelta) * 1000;
+                        eta = remaining / speed;
+                    }
+                    lastTime = new Date();
+                    lastBytes = e.loaded;
+                    FileBrowser.setUploadState(
+                        percentage,
+                        remaining,
+                        speed,
+                        eta
+                    );
+                }
+            },
+            function(e) {
+                // On Error
+                console.log(e);
+                Materialize.toast('An unexpected error occurred while uploading your file.', 5000);
+                modal.modal('close');
+            },
+            function(e) {
+                // On Finish
+                try {
+                    var d = JSON.parse(this.responseText);
+                    if (d.ok) {
+                        Materialize.toast('Upload completed.', 2500);
+                    } else if (d.error) {
+                        var error = 'Upload failed';
+                        switch (d.error.code) {
+                            case 'LIMIT_FILE_SIZE':
+                                error = 'File could not be saved, file too large';
+                                break;
+                        }
+                        Materialize.toast(error, 2500);
+                    } else {
+                        Materialize.toast('Upload failed!', 2500);
+                    }
+                } catch (err) {
+                    console.log(err);
+                    Materialize.toast('Upload failed!', 2500);
+                }
+                modal.modal('close');
+                FileBrowser.navigateTo(FileBrowser.currentPath);
+            },
+            function(formData) {
+                // Before Send
+                modal.modal('open');
+                $('button', modal).off().click(function() {
+                    xhr.abort();
+                    Materialize.toast('Upload aborted', 2500);
+                    modal.modal('close');
+                });
+                return formData;
+            }
+        );
+    },
+    setUploadState: function(percentage, bytesRemain, speed, eta) {
+        var modal = $('#uploadProgressModal');
+        $('.determinate', modal).width(percentage + '%');
+        $('.upload-remain-data', modal).text(filesize(bytesRemain, {round: 1}));
+        $('.upload-speed', modal).text(filesize(speed, {round: 1}));
+        $('.upload-percentage', modal).text(Math.floor(percentage));
+        $('.upload-eta', modal).text(moment.duration(Math.ceil(eta / 10) * 10, 'seconds').format('m [min] s [sec]'));
     }
 };
 
 $(document).ready(function() {
+    const FILENAME_VALID = /^[0-9a-zA-Z\^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_ ]+$/;
+
     $('.navigate-back-button').click(function(e) {
         FileBrowser.navigateBack();
         $('.button-collapse').sideNav('hide');
@@ -146,6 +256,20 @@ $(document).ready(function() {
     $('.nav-to-root-button').click(function(e) {
         FileBrowser.navigateTo('/');
         $('.button-collapse').sideNav('hide');
+    });
+    $('#createFolderForm').submit(function(e) {
+        e.preventDefault();
+        var newDirName = $('#createFolderName').val();
+        if (newDirName && newDirName.match(FILENAME_VALID)) {
+            FileBrowser.createDirectory(newDirName);
+        } else {
+            Materialize.toast('Please enter a valid name.', 2500);
+        }
+    });
+    $('#uploadFileForm').submit(function(e) {
+        e.preventDefault();
+        $('#uploadFileModal').modal('close');
+        FileBrowser.uploadFile();
     });
     FileBrowser.init();
 });

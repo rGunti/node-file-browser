@@ -12,6 +12,7 @@
 const debug = require('debug')('FileBrowser:Routes/FileBrowser');
 const config = require('config');
 const HandleRender = require('../ui/handlebar-renderer');
+const multer = require('multer');
 
 const fs = require('fs');
 const path = require('path');
@@ -28,6 +29,14 @@ function sendFileBrowserResponse(res, path, files, err) {
         files: files,
         path: path
     })
+}
+
+function sendSimpleAnswer(res, err, data) {
+    res.json({
+        ok: (!err),
+        error: err,
+        data: data
+    });
 }
 
 router.get('/', (req, res) => {
@@ -56,6 +65,51 @@ router.get('/', (req, res) => {
                 sendFileBrowserResponse(res, scanDir, collection, err);
             });
         }
+    });
+});
+
+router.post('/create-dir', (req, res) => {
+    if (!req.body.newDirName) {
+        return sendSimpleAnswer(res, { code: 'EPERM' });
+    }
+    let scanDir = ROOT;
+    if (req.body.path) {
+        let queryPath = req.body.path;
+        let pathArr = queryPath.split('/').filter((i) => { return !!i && i !== '..'; });
+        scanDir = path.join(ROOT, pathArr.join('/'));
+    }
+    let createDir = path.join(scanDir, req.body.newDirName.split('/')[0]);
+    fs.stat(createDir, (err, stats) => {
+        if (err && err.code === 'ENOENT') {
+            fs.mkdir(createDir, (err) => {
+                sendSimpleAnswer(res, err);
+            });
+        } else {
+            sendSimpleAnswer(res, { code: 'EEXIST' });
+        }
+    });
+});
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        let uploadDir = ROOT;
+        if (req.query.path) {
+            let queryPath = req.query.path;
+            let pathArr = queryPath.split('/').filter((i) => { return !!i && i !== '..'; });
+            uploadDir = path.join(ROOT, pathArr.join('/'));
+        }
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => { cb(null, file.originalname) }
+});
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: config.get('server.upload.limit') }
+}).single('uploadFile');
+
+router.post('/upload', (req, res) => {
+    upload(req, res, (err) => {
+        sendSimpleAnswer(res, err);
     });
 });
 

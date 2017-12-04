@@ -18,7 +18,6 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const multer = require('multer');
 const HandleRender = require('./ui/handlebar-renderer');
 const HandleHelpers = require('./ui/handlebar-helpers');
 

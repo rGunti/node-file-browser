@@ -38,3 +38,19 @@ function simpleAjax(url, method, data, callback, errorCallback) {
         }
     });
 }
+
+function uploadAjaxFile(url, method, fileElementId, onProgress, onError, onFinish, beforeSend) {
+    var formData = new FormData();
+    var file = document.getElementById(fileElementId).files[0];
+    formData.append(fileElementId, file);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, url, true);
+    xhr.upload.onprogress = onProgress;
+    xhr.onerror = onError;
+    xhr.onload = onFinish;
+
+    if (beforeSend) formData = beforeSend(formData);
+    xhr.send(formData);
+    return xhr;
+}
