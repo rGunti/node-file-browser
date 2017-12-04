@@ -41,3 +41,6 @@ samp.break-all {
 .modal.bottom-sheet {
     max-height: 75%;
 }
+.hidden {
+    display: none;
+}

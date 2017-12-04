@@ -1,3 +1,60 @@
-<div class="center-align">
-    <h3>Hello world!</h3>
+<div class="row">
+    <a href="#!" id="navigateBackButton">
+        <i class="material-icons left">arrow_back</i>
+    </a>
+    <a href="#!" id="reloadButton">
+        <i class="material-icons left">refresh</i>
+    </a>
+    <span class="truncate" id="currentBrowserPath" style="padding-top:2px">/</span>
 </div>
+
+<ul class="collection" id="renderTarget">
+</ul>
+
+<!-- Floating Button -->
+<div class="fixed-action-btn">
+    <a class="btn-floating btn-large indigo z-depth-3">
+        <i class="large material-icons">add</i>
+    </a>
+    <ul>
+        <li><a class="btn-floating green" id="createFolderFAB"><i class="material-icons">create_new_folder</i></a></li>
+        <li><a class="btn-floating green" id="uploadFileFAB"><i class="material-icons">publish</i></a></li>
+    </ul>
+</div>
+
+<!-- Templates -->
+<ul class="collection hidden">
+    <li class="collection-item avatar" id="fileTemplate">
+        <a href="#!" class="file-icon">
+            <i class="circle material-icons indigo">insert_drive_file</i>
+        </a>
+        <span class="title truncate">[[__title__]]</span>
+        <p class="meta">[[__size__]]</p>
+
+        <a href="#!" class="secondary-content indigo-text">
+            <i class="material-icons">more_horiz</i>
+        </a>
+    </li>
+    <li class="collection-item avatar" id="folderTemplate">
+        <a href="#!" class="file-icon">
+            <i class="circle material-icons indigo darken-4">folder</i>
+        </a>
+        <span class="title truncate">[[__title__]]</span>
+
+        <a href="#!" class="secondary-content indigo-text">
+            <i class="material-icons">more_horiz</i>
+        </a>
+    </li>
+    <li class="collection-item avatar" id="inaccessibleTemplate">
+        <a href="#!" class="file-icon">
+            <i class="circle material-icons red darken-2">clear</i>
+        </a>
+        <span class="title truncate">[[__title__]]</span>
+        <p class="meta">[[__error_info__]]</p>
+    </li>
+    <li class="collection-item center-align" id="emptyTemplate">
+        <span class="title">No items found</span>
+    </li>
+</ul>
+
+<script src="/public/js/filebrowser.js"></script>

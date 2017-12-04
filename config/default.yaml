@@ -2,6 +2,8 @@ app:
   fullName: File Browser
   shortName: Files
   instance: dev
+  filebrowser:
+    basePath: D:/
 server:
   port: 5050
   upload:
