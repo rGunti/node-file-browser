@@ -27,6 +27,7 @@
     "font-awesome": "^4.7.0",
     "handlebars-helpers": "^0.10.0",
     "jquery": "^3.2.1",
+    "jquery-file-download": "^1.4.6",
     "js-yaml": "^3.10.0",
     "material-design-icons-iconfont": "^3.0.3",
     "materialize-css": "^0.100.2",

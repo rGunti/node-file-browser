@@ -21,7 +21,8 @@ const async = require('async');
 const router = require('express').Router();
 const ROOT = config.get('app.filebrowser.basePath');
 
-function sendFileBrowserResponse(res, path, files, err) {
+function sendFileBrowserResponse(res, path, files, err, statusCode) {
+    res.status((!err) ? statusCode || 200 : statusCode || 500);
     res.json({
         ok: (!err),
         error: err,
@@ -111,6 +112,22 @@ router.post('/upload', (req, res) => {
     upload(req, res, (err) => {
         sendSimpleAnswer(res, err);
     });
+});
+
+router.get('/download', (req, res) => {
+    if (req.query.path) {
+        let filePath = path.join(ROOT, req.query.path);
+        fs.stat(filePath, (err, stats) => {
+            if (err) {
+                sendSimpleAnswer(res, { code: 'ENOENT', message: 'File not found' }, null, 404);
+            } else {
+                res.cookie('fileDownload', true, { maxAge: 900000, path: '/' });
+                res.download(filePath);
+            }
+        });
+    } else {
+        sendSimpleAnswer(res, { code: 'EPERM', message: 'No file specified' })
+    }
 });
 
 module.exports = router;

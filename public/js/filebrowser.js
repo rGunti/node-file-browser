@@ -23,7 +23,8 @@ const FileBrowser = {
             url: {
                 index: ['/api/filebrowser', 'get'],
                 createDir: ['/api/filebrowser/create-dir', 'post'],
-                upload: ['/api/filebrowser/upload', 'post']
+                upload: ['/api/filebrowser/upload', 'post'],
+                download: ['/api/filebrowser/download', 'get']
             },
             args: {
                 path: 'path',
@@ -130,12 +131,12 @@ const FileBrowser = {
         if (fileInfo.isDir) {
             FileBrowser.navigateTo(completePath);
         } else {
-            alert(completePath);
+            FileBrowser.downloadFile(completePath);
         }
     },
-    onFileClick: function(e) {
+    onFileActionClick: function(e) {
     },
-    onFolderClick: function(e) {
+    onFolderActionClick: function(e) {
     },
     createDirectory: function(dirname) {
         LoadingIndicator.show();
@@ -239,6 +240,27 @@ const FileBrowser = {
         $('.upload-speed', modal).text(filesize(speed, {round: 1}));
         $('.upload-percentage', modal).text(Math.floor(percentage));
         $('.upload-eta', modal).text(moment.duration(Math.ceil(eta / 10) * 10, 'seconds').format('m [min] s [sec]'));
+    },
+    getDownloadUrl: function(path) {
+        return FileBrowser.settings.api.url.download[0] + '?' +
+            FileBrowser.settings.api.args.path + '=' +
+            encodeURIComponent(path);
+    },
+    downloadFile: function(path) {
+        var progressModal = $('#downloadProgressModal');
+        progressModal.modal('open');
+        setTimeout(function() {
+            var downloadUrl = FileBrowser.getDownloadUrl(path);
+            if (isiOS) {
+                var linkModal = $('#downloadLinkModal');
+                $('.download-link-target', linkModal).attr('href', downloadUrl);
+                linkModal.modal('open');
+                //window.location.href = downloadUrl;
+            } else {
+                window.open(downloadUrl);
+            }
+            progressModal.modal('close');
+        }, 1000);
     }
 };
 

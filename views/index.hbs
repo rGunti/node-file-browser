@@ -130,4 +130,35 @@
     </div>
 </div>
 
+<div id="downloadProgressModal" class="modal bottom-sheet non-dismissible">
+    <div class="modal-content">
+        <h4>Downloading...</h4>
+        <div class="row">
+            <div class="col s12 progress indigo lighten-5">
+                <div class="indeterminate indigo"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer"></div>
+</div>
+
+<div id="downloadLinkModal" class="modal bottom-sheet">
+    <div class="modal-content">
+        <h4>Download ready</h4>
+        <p>
+            Your download is ready. Click the download button to proceed:
+        </p>
+        <p class="download-link-target"></p>
+    </div>
+    <div class="modal-footer">
+        <a class="waves-effect waves-light btn indigo download-link-target">
+            <i class="material-icons left">file_download</i>
+            Download
+        </a>
+        <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
+            OK
+        </button>
+    </div>
+</div>
+
 <script src="/public/js/filebrowser.js"></script>

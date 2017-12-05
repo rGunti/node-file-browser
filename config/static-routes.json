@@ -7,5 +7,6 @@
   "/node_modules/moment/min": "/public/js",
   "/node_modules/moment-duration-format/lib": "/public/js",
   "/node_modules/typeface-roboto-condensed": "/public/css/roboto-condensed",
-  "/node_modules/filesize/lib/": "/public/js"
+  "/node_modules/filesize/lib/": "/public/js",
+  "/node_modules/jquery-file-download/src/Scripts/": "/public/js"
 }
