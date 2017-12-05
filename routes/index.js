@@ -10,54 +10,13 @@
  */
 
 const debug = require('debug')('FileBrowser:Routes/index');
-const config = require('config');
 const HandleRender = require('../ui/handlebar-renderer');
-const multer = require('multer');
-const moment = require('moment');
-
-const fs = require('fs');
-const path = require('path');
-const UPLOAD_DIR = config.get('server.upload.destination');
 
 const router = require('express').Router();
-
-let storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, config.get('server.upload.destination'))
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.originalname);
-    }
-});
-let upload = multer({
-    storage: storage,
-    limits: { fileSize: config.get('server.upload.limit') }
-}).single('uploadFile');
 
 router.get('/', (req, res, next) => {
     debug(`Requested from ${req.ip}`);
     HandleRender.render(res, 'index', 'Home');
-});
-
-router.get('/upload', (req, res) => {
-    HandleRender.render(res, 'upload', 'Upload');
-});
-router.post('/upload', (req, res) => {
-    upload(req, res, (err) => {
-        if (err) {
-            res.json({ ok: false, uploadedFile: null, error: err });
-        } else {
-            res.json({ ok: true, uploadedFile: '' });
-        }
-    });
-    //let uploadPath = path.join(UPLOAD_DIR, req.files.uploadFile.name);
-    //fs.writeFile(uploadPath, req.files.uploadFile.data, 'binary', (err) => {
-    //    if (err) {
-    //        res.json({ ok: false, uploadedFile: uploadPath, error: err });
-    //    } else {
-    //        res.json({ ok: true, uploadedFile: uploadPath });
-    //    }
-    //});
 });
 
 module.exports = router;
