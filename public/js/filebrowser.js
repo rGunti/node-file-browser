@@ -24,7 +24,8 @@ const FileBrowser = {
                 index: ['/api/filebrowser', 'get'],
                 createDir: ['/api/filebrowser/create-dir', 'post'],
                 upload: ['/api/filebrowser/upload', 'post'],
-                download: ['/api/filebrowser/download', 'get']
+                download: ['/api/filebrowser/download', 'get'],
+                delete: ['/api/filebrowser/delete', 'delete']
             },
             args: {
                 path: 'path',
@@ -178,6 +179,19 @@ const FileBrowser = {
                 FileBrowser.downloadFile(completePath);
                 aboutActionsModal.modal('close');
                 break;
+            case 'file-delete':
+                var deleteModal = $('#fileDeleteModal');
+                $('.file-name', deleteModal).text(fileName);
+                $('#fileDeletePath', deleteModal).val(completePath);
+
+                if (fileInfo.isDir) {
+                    $('.show-on-folder', deleteModal).show();
+                } else {
+                    $('.show-on-folder', deleteModal).hide();
+                }
+
+                deleteModal.modal('open');
+                break;
             default:
                 Materialize.toast('Action ' + actionType + ' not implemented', 2500);
                 break;
@@ -306,6 +320,40 @@ const FileBrowser = {
             }
             progressModal.modal('close');
         }, 1000);
+    },
+    deleteFile: function(path) {
+        let data = {};
+        data[FileBrowser.settings.api.args.path] = path;
+        simpleAjax(
+            FileBrowser.settings.api.url.delete[0],
+            FileBrowser.settings.api.url.delete[1],
+            data,
+            function(res) {
+                FileBrowser.navigateTo(FileBrowser.currentPath);
+                Materialize.toast('File deleted.', 2500);
+                $('#processingModal').modal('close');
+            }, function(e) {
+                var d = e.response;
+                if (d) {
+                    if (d.ok) {
+                        Materialize.toast('File deleted.', 2500);
+                    } else if (d.error) {
+                        var error = 'File could not be deleted.';
+                        switch (d.error.code) {
+                            case 'EPERM':
+                                error = 'Deleting is not permitted.';
+                                break;
+                        }
+                        Materialize.toast(error, 2500);
+                    } else {
+                        Materialize.toast('The file could not be deleted!', 2500);
+                    }
+                } else {
+                    Materialize.toast('The file could not be deleted!', 2500);
+                }
+                $('#processingModal').modal('close');
+            }
+        );
     }
 };
 
@@ -339,5 +387,14 @@ $(document).ready(function() {
         FileBrowser.uploadFile();
     });
     $('.file-advanced-action').click(FileBrowser.onModalActionClick);
+    $('#fileDeleteForm').submit(function(e) {
+        e.preventDefault();
+        $('#fileActionsModal').modal('close');
+        $('#fileDeleteModal').modal('close');
+        $('#processingModal').modal('open');
+        setTimeout(function() {
+            FileBrowser.deleteFile($('#fileDeletePath').val());
+        }, 500);
+    });
     FileBrowser.init();
 });

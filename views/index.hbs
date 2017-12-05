@@ -202,4 +202,42 @@
     </div>
 </div>
 
+<form id="fileDeleteForm">
+    <div id="fileDeleteModal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h4 class="truncate">Delete <span class="file-name"></span></h4>
+            <p>
+                Would you really like to delete <b class="file-name">[[__filename__]]</b>?
+            </p>
+            <p class="show-on-folder">
+                This action deletes this folder and all of its content.
+            </p>
+            <p>
+                <b>This action cannot be reversed!</b>
+            </p>
+            <input type="hidden" id="fileDeletePath">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
+                No
+            </button>
+            <button type="submit" class="btn waves-effect waves-light red modal-button-confirm">
+                Yes
+            </button>
+        </div>
+    </div>
+</form>
+
+<div id="processingModal" class="modal bottom-sheet non-dismissible">
+    <div class="modal-content">
+        <h4>Processing...</h4>
+        <div class="row">
+            <div class="col s12 progress indigo lighten-5">
+                <div class="indeterminate indigo"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer"></div>
+</div>
+
 <script src="/public/js/filebrowser.js"></script>

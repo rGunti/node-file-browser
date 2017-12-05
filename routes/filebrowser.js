@@ -13,6 +13,7 @@ const debug = require('debug')('FileBrowser:Routes/FileBrowser');
 const config = require('config');
 const HandleRender = require('../ui/handlebar-renderer');
 const multer = require('multer');
+const rimraf = require('rimraf');
 
 const fs = require('fs');
 const path = require('path');
@@ -124,6 +125,27 @@ router.get('/download', (req, res) => {
             } else {
                 res.cookie('fileDownload', true, { maxAge: 900000, path: '/' });
                 res.download(filePath);
+            }
+        });
+    } else {
+        sendSimpleAnswer(res, { code: 'EPERM', message: 'No file specified' })
+    }
+});
+
+router.delete('/delete', (req, res) => {
+    if (req.body.path) {
+        let filePath = path.join(ROOT, req.body.path);
+        fs.stat(filePath, (err, stats) => {
+            if (err) {
+                sendSimpleAnswer(res, { code: 'ENOENT', message: 'File not found' }, null, 404);
+            } else if (stats.isDirectory()) {
+                rimraf(filePath, { glob: false }, (err) => {
+                    sendSimpleAnswer(res, err);
+                });
+            } else {
+                fs.unlink(filePath, (err) => {
+                    sendSimpleAnswer(res, err);
+                });
             }
         });
     } else {
