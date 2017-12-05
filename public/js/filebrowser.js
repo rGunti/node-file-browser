@@ -103,6 +103,11 @@ const FileBrowser = {
             fileIcon.data('file-name', filename);
             fileIcon.data('file', file);
 
+            var actionsLink = $('.secondary-content', item);
+            actionsLink.click(FileBrowser.onActionsClick);
+            actionsLink.data('file-name', filename);
+            actionsLink.data('file', file);
+
             item.appendTo(renderTarget);
         }
 
@@ -134,9 +139,49 @@ const FileBrowser = {
             FileBrowser.downloadFile(completePath);
         }
     },
-    onFileActionClick: function(e) {
+    onActionsClick: function(e) {
+        var aboutActionsModal = $('#fileActionsModal');
+
+        var link = $(e.currentTarget);
+        var fileName = link.data('file-name');
+        var fileInfo = link.data('file');
+
+        if (fileInfo.isDir) {
+            $('.hidden-on-folder', aboutActionsModal).hide();
+        } else {
+            $('.hidden-on-folder', aboutActionsModal).show();
+        }
+
+        $('.file-name').text(fileName);
+        $('.file-size').text(filesize(fileInfo.size));
+        $('.file-birthdate').text(moment(fileInfo.birthtimeMs).format('LLL'));
+        $('.file-mdate').text(moment(fileInfo.mtimeMs).format('LLL'));
+
+        var links = $('.file-advanced-action');
+        links.data('file-name', fileName);
+        links.data('file', fileInfo);
+
+        aboutActionsModal.modal('open');
     },
-    onFolderActionClick: function(e) {
+    onModalActionClick: function(e) {
+        var aboutActionsModal = $('#fileActionsModal');
+
+        var link = $(e.currentTarget);
+        var fileName = link.data('file-name');
+        var fileInfo = link.data('file');
+        var completePath = FileBrowser.cleanupPath(FileBrowser.currentPath + '/' + fileName);
+
+        var actionType = link.data('action');
+
+        switch (actionType) {
+            case 'file-download':
+                FileBrowser.downloadFile(completePath);
+                aboutActionsModal.modal('close');
+                break;
+            default:
+                Materialize.toast('Action ' + actionType + ' not implemented', 2500);
+                break;
+        }
     },
     createDirectory: function(dirname) {
         LoadingIndicator.show();
@@ -293,5 +338,6 @@ $(document).ready(function() {
         $('#uploadFileModal').modal('close');
         FileBrowser.uploadFile();
     });
+    $('.file-advanced-action').click(FileBrowser.onModalActionClick);
     FileBrowser.init();
 });

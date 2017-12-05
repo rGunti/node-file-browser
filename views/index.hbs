@@ -132,7 +132,7 @@
 
 <div id="downloadProgressModal" class="modal bottom-sheet non-dismissible">
     <div class="modal-content">
-        <h4>Downloading...</h4>
+        <h4>Preparing...</h4>
         <div class="row">
             <div class="col s12 progress indigo lighten-5">
                 <div class="indeterminate indigo"></div>
@@ -157,6 +157,47 @@
         </a>
         <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
             OK
+        </button>
+    </div>
+</div>
+
+<div id="fileActionsModal" class="modal bottom-sheet modal-fixed-footer">
+    <div class="modal-content">
+        <dl>
+            <dt>Name:</dt>
+            <dd class="file-name">[[__name__]]</dd>
+
+            <dt class="hidden-on-folder">Size:</dt>
+            <dd class="hidden-on-folder file-size">[[__size__]]</dd>
+
+            <dt>Created / Last modified:</dt>
+            <dd class="file-birthdate">[[__birthdate__]]</dd>
+            <dd class="file-mdate">[[__mdate__]]</dd>
+        </dl>
+        <ul class="collection">
+            <li class="collection-item hidden-on-folder">
+                <a href="#!" class="file-advanced-action" data-action="file-download">
+                    <i class="material-icons left">file_download</i>
+                    Download File
+                </a>
+            </li>
+            <li class="collection-item">
+                <a href="#!" class="file-advanced-action" data-action="file-rename">
+                    <i class="material-icons left">edit</i>
+                    Rename
+                </a>
+            </li>
+            <li class="collection-item">
+                <a href="#!" class="file-advanced-action" data-action="file-delete">
+                    <i class="material-icons left">delete</i>
+                    Delete
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
+            Close
         </button>
     </div>
 </div>

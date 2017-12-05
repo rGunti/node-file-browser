@@ -58,6 +58,7 @@ router.get('/', (req, res) => {
                         collection[item] = err;
                     } else {
                         stats.isDir = stats.isDirectory();
+                        stats.extension = stats.isDir ? null : path.extname(item).toLowerCase();
                         collection[item] = stats;
                     }
                     callback();
