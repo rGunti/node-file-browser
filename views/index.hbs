@@ -1,0 +1,250 @@
+<div class="collection file-browser" id="renderTarget">
+</div>
+
+<!-- Floating Button -->
+<div class="fixed-action-btn">
+    <a class="btn-floating btn-large indigo z-depth-3">
+        <i class="large material-icons">add</i>
+    </a>
+    <ul>
+        <li>
+            <a class="btn-floating green pulse modal-trigger" href="#createFolderModal" id="createFolderFAB">
+                <i class="material-icons">create_new_folder</i>
+            </a>
+        </li>
+        <li>
+            <a class="btn-floating green pulse modal-trigger" href="#uploadFileModal" id="uploadFileFAB">
+                <i class="material-icons">publish</i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<!-- Templates -->
+<div class="collection hidden">
+    <a class="collection-item indigo-text nav-link" id="fileTemplate">
+        <i class="material-icons left">insert_drive_file</i>
+        <span class="title truncate">[[__title__]]</span>
+    </a>
+    <div class="collection-item row" id="folderTemplate">
+        <a class="col s10 indigo-text text-darken-4 nav-link">
+            <i class="material-icons left">folder</i>
+            <span class="title truncate">[[__title__]]</span>
+        </a>
+        <a class="col s2 action-link">
+            <i class="material-icons left">more_verti</i>
+        </a>
+    </div>
+    <a class="collection-item red-text text-darken-2" id="inaccessibleTemplate">
+        <i class="material-icons left">clear</i>
+        <span class="title truncate">[[__title__]]</span>
+    </a>
+    <a class="collection-item green-text center-align" id="emptyTemplate">
+        <span class="title">No items found</span>
+    </a>
+</div>
+
+<!-- Modals -->
+<form id="createFolderForm">
+    <div id="createFolderModal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h4>Create new folder</h4>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input type="text" id="createFolderName" class="validate">
+                    <label for="createFolderName">Folder Name</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
+                Cancel
+            </button>
+            <button type="submit" class="btn waves-effect waves-light indigo modal-button-confirm">
+                Save
+            </button>
+        </div>
+    </div>
+</form>
+
+<form id="uploadFileForm">
+    <div id="uploadFileModal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h4>Upload file here</h4>
+            <div class="row file-field input-field">
+                <div class="col s12">
+                    <div class="btn">
+                        <span>Select File</span>
+                        <input type="file" id="uploadFile" name="uploadFile">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input type="text" class="file-path validate">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
+                Cancel
+            </button>
+            <button type="submit" class="btn waves-effect waves-light indigo modal-button-confirm">
+                Upload
+            </button>
+        </div>
+    </div>
+</form>
+
+<div id="uploadProgressModal" class="modal bottom-sheet non-dismissible">
+    <div class="modal-content">
+        <h4>Uploading...</h4>
+        <div class="row">
+            <span class="col s7 left-align">
+                <span class="upload-remain-data">0 B</span> remain.<br>
+                <span class="upload-percentage">0</span> %
+            </span>
+            <span class="col s5 right-align">
+                <span class="upload-speed">0 B</span>/s<br>
+                <span class="upload-eta">0 sec</span>
+            </span>
+            <div class="col s12 progress indigo lighten-5">
+                <div class="indeterminate indigo lighten-4"></div>
+                <div class="determinate indigo" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-flat waves-effect waves-light">
+            Cancel Upload
+        </button>
+    </div>
+</div>
+
+<div id="downloadProgressModal" class="modal bottom-sheet non-dismissible">
+    <div class="modal-content">
+        <h4>Preparing...</h4>
+        <div class="row">
+            <div class="col s12 progress indigo lighten-5">
+                <div class="indeterminate indigo"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer"></div>
+</div>
+
+<div id="downloadLinkModal" class="modal bottom-sheet">
+    <div class="modal-content">
+        <h4>Download ready</h4>
+        <p>
+            Your download is ready. Click the download button to proceed:
+        </p>
+        <p class="download-link-target"></p>
+    </div>
+    <div class="modal-footer">
+        <a class="waves-effect waves-light btn indigo download-link-target">
+            <i class="material-icons left">file_download</i>
+            Download
+        </a>
+        <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
+            OK
+        </button>
+    </div>
+</div>
+
+<div id="fileActionsModal" class="modal bottom-sheet modal-fixed-footer">
+    <div class="modal-content">
+        <dl>
+            <dt>Name:</dt>
+            <dd class="file-name truncate">[[__name__]]</dd>
+
+            <dt class="hidden-on-folder">Size:</dt>
+            <dd class="hidden-on-folder file-size">[[__size__]]</dd>
+
+            <dt>Created / Last modified:</dt>
+            <dd class="file-birthdate">[[__birthdate__]]</dd>
+            <dd class="file-mdate">[[__mdate__]]</dd>
+        </dl>
+        <div class="collection">
+            <a href="#" class="collection-item hidden-on-folder file-advanced-action" data-action="file-download">
+                <i class="material-icons left">file_download</i>
+                Download File
+            </a>
+            <a href="#" class="collection-item file-advanced-action" data-action="file-rename">
+                <i class="material-icons left">edit</i>
+                Rename
+            </a>
+            <a href="#" class="collection-item file-advanced-action" data-action="file-delete">
+                <i class="material-icons left">delete</i>
+                Delete
+            </a>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
+            Close
+        </button>
+    </div>
+</div>
+
+<form id="fileDeleteForm">
+    <div id="fileDeleteModal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h4 class="truncate">Delete <span class="file-name">[[__filename__]]</span></h4>
+            <p>
+                Would you really like to delete <b class="file-name truncate">[[__filename__]]</b>?
+            </p>
+            <p class="show-on-folder">
+                This action deletes this folder and all of its content.
+            </p>
+            <p>
+                <b>This action cannot be reversed!</b>
+            </p>
+            <input type="hidden" id="fileDeletePath">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
+                No
+            </button>
+            <button type="submit" class="btn waves-effect waves-light red modal-button-confirm">
+                Yes
+            </button>
+        </div>
+    </div>
+</form>
+
+<form id="fileRenameForm">
+    <div id="fileRenameModal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h4 class="truncate">Rename <span class="file-name">[[__filename__]]</span></h4>
+            <p>
+                Enter a new name for <b class="file-name truncate">[[__filename__]]</b>
+            </p>
+            <div class="input-field">
+                <input type="text" id="fileRenameNewName" value="[[__filename__]]" class="validate">
+                <label for="fileRenameNewName">File Name</label>
+            </div>
+            <input type="hidden" id="fileRenameOldName">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
+                Cancel
+            </button>
+            <button type="submit" class="btn waves-effect waves-light indigo modal-button-confirm">
+                Rename
+            </button>
+        </div>
+    </div>
+</form>
+
+<div id="processingModal" class="modal bottom-sheet non-dismissible">
+    <div class="modal-content">
+        <h4>Processing...</h4>
+        <div class="row">
+            <div class="col s12 progress indigo lighten-5">
+                <div class="indeterminate indigo"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer"></div>
+</div>
+
+<script src="/public/js/filebrowser.js"></script>

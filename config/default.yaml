@@ -1,0 +1,20 @@
+app:
+  fullName: File Browser
+  shortName: Files
+  instance: dev
+  filebrowser:
+    basePath: D:/
+server:
+  port: 5050
+  upload:
+    destination: R:/
+    limit: 104857600
+internals:
+  dirs:
+    views: /views
+    hbs:
+      partials: /views/partials
+      layouts: /views/layouts
+      defaultLayout: /views/layouts/main.hbs
+    routes: /config/routes.json
+    staticRoutes: /config/static-routes.json

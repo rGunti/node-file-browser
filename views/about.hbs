@@ -1,0 +1,140 @@
+<h4>App Info</h4>
+<h5>
+    <b>{{utils.package.name}}</b>
+    Ver.
+    <b>{{utils.package.version}}</b>
+</h5>
+<p class="flow-text">{{utils.package.description}}</p>
+<dl>
+    <dt>Friendly Name*</dt>
+    <dd>
+        {{getConfig 'app.fullName'}}<br>
+        Instance: <i>{{getConfig 'app.instance'}}</i>
+    </dd>
+
+    <dt>License</dt>
+    <dd>
+        <a href="/license">{{utils.package.license}} License</a>
+    </dd>
+
+    <dt>Author</dt>
+    <dd>
+        {{utils.package.author.name}}
+        &lt;<a href="mailto:{{utils.package.author.email}}">{{utils.package.author.email}}</a>&gt;
+    </dd>
+
+    <dt>Links</dt>
+    <dd>
+        <p>
+            <a target="_blank" class="waves-effect waves-teal btn indigo" href="{{utils.package.homepage}}">
+                <i class="material-icons left">web</i>
+                Homepage</a>
+        </p>
+        <p>
+            <a target="_blank" class="waves-effect waves-teal btn indigo" href="{{utils.package.repository}}">
+                <i class="material-icons left">code</i>
+                Repository</a>
+        </p>
+        <p>
+            <a target="_blank" class="waves-effect waves-teal btn indigo" href="{{utils.package.bugs}}">
+                <i class="material-icons left">bug_report</i>
+                Bug Report</a>
+        </p>
+    </dd>
+
+    <dt>Dependencies</dt>
+    <dd>
+        <ul>
+            {{#each utils.package.dependencies}}
+                <li>
+                    <b>{{@key}}</b>
+                    <samp>{{this}}</samp>
+                </li>
+            {{/each}}
+        </ul>
+    </dd>
+</dl>
+
+<h5>Node.JS</h5>
+<dl>
+    <dt>Node Version</dt>
+    <dd><samp>{{data.nodeInfo.version}}</samp></dd>
+
+    <dt>Server Uptime</dt>
+    <dd>{{data.uptime}}</dd>
+
+    <dt>Node Modules</dt>
+    <dd>
+        <ul>
+            {{#each data.nodeInfo.versions}}
+                <li>
+                    <b>{{@key}}</b>
+                    <samp>{{this}}</samp>
+                </li>
+            {{/each}}
+        </ul>
+    </dd>
+
+    <dt>Memory Usage</dt>
+    <dd>
+        <dl>
+            <dt>Heap</dt>
+            <dd>{{formatFileSize data.nodeInfo.memoryUsage.heapTotal}}</dd>
+            <dt>Heap Used</dt>
+            <dd>{{formatFileSize data.nodeInfo.memoryUsage.heapUsed}}</dd>
+            <dt>External</dt>
+            <dd>{{formatFileSize data.nodeInfo.memoryUsage.external}}</dd>
+        </dl>
+    </dd>
+</dl>
+
+<h5>OS Info</h5>
+<dl>
+    <dt>Host</dt>
+    <dd><samp>{{data.hostname}}</samp></dd>
+
+    <dt>Architecture</dt>
+    <dd><samp>{{data.arch}}</samp></dd>
+
+    <dt>OS</dt>
+    <dd>{{data.osType}} {{data.osRelease}} ({{data.osPlatform}})</dd>
+
+    <dt>User</dt>
+    <dd>
+        {{data.userInfo.username}}<br>
+        <samp>{{data.userInfo.homedir}}</samp>
+    </dd>
+
+    <dt>Memory</dt>
+    <dd>
+        {{formatFileSize data.memoryFree}} free
+        ({{formatFileSize data.memoryTotal}} total)
+    </dd>
+
+    <dt>CPUs / Cores</dt>
+    <dd>
+        {{#each data.cpus}}
+            <samp>{{this.model}}</samp> at <i>{{this.speed}} MHz</i><br>
+        {{/each}}
+    </dd>
+</dl>
+
+<h5>Networking</h5>
+<dl>
+    {{#each data.network}}
+        <dt>{{@key}}</dt>
+        <dd>
+            {{#each this}}
+                <samp class="break-all">{{this.address}}</samp><br>
+            {{/each}}
+        </dd>
+    {{/each}}
+</dl>
+
+<h5>Environment Variables</h5>
+<dl>
+    {{#each data.processEnv}}
+        <dt><samp>{{@key}}</samp></dt>
+        <dd><samp class="break-all">{{this}}</samp></dd>
+    {{/each}}
+</dl>
