@@ -69,6 +69,14 @@ const FileBrowser = {
                 LoadingIndicator.hide();
             }, function(e) {
                 LoadingIndicator.hide();
+                Materialize.toast('Folder could not be loaded. Maybe it doesn\'t exist anymore?', 2500);
+                FileBrowser._render(path, (e.response && e.response.responseJSON) ? e.response.responseJSON : {
+                    fileCount: 0,
+                    files: {},
+                    path: path,
+                    ok: false,
+                    error: null
+                });
             }
         )
     },
@@ -81,38 +89,44 @@ const FileBrowser = {
             inaccessible: $(FileBrowser.settings.templates.inaccessible)
         };
         renderTarget.empty();
-        var keys = Object.keys(res.files).sort();
-        for (var i in keys) {
-            var filename = keys[i];
-            var file = res.files[filename];
-            var item = file.errno ?
-                templates.inaccessible.clone() :
-                (file.isDir ? templates.folder.clone() : templates.file.clone());
-            $('.title', item).text(filename);
-            if (file.errno) {
-                // => Is Error
-                if (!FileBrowser.settings.showErrorItems) {
-                    continue;
+
+        if (res.fileCount >= 1) {
+            var keys = Object.keys(res.files).sort();
+            for (var i in keys) {
+                var filename = keys[i];
+                var file = res.files[filename];
+                var item = file.errno ?
+                    templates.inaccessible.clone() :
+                    (file.isDir ? templates.folder.clone() : templates.file.clone());
+                $('.title', item).text(filename);
+                if (file.errno) {
+                    // => Is Error
+                    if (!FileBrowser.settings.showErrorItems) {
+                        continue;
+                    }
+                    $('.meta', item).text(file.code);
+                } else if (file.isDir) {
+                    // => Is Dir
+                } else {
+                    // => Is File
+                    $('.meta', item).text(filesize(file.size || 0));
                 }
-                $('.meta', item).text(file.code);
-            } else if (file.isDir) {
-                // => Is Dir
-            } else {
-                // => Is File
-                $('.meta', item).text(filesize(file.size || 0));
+
+                var fileIcon = $('.file-icon', item);
+                fileIcon.click(FileBrowser.onFileIconClick);
+                fileIcon.data('file-name', filename);
+                fileIcon.data('file', file);
+
+                var actionsLink = $('.secondary-content', item);
+                actionsLink.click(FileBrowser.onActionsClick);
+                actionsLink.data('file-name', filename);
+                actionsLink.data('file', file);
+
+                item.appendTo(renderTarget);
             }
-
-            var fileIcon = $('.file-icon', item);
-            fileIcon.click(FileBrowser.onFileIconClick);
-            fileIcon.data('file-name', filename);
-            fileIcon.data('file', file);
-
-            var actionsLink = $('.secondary-content', item);
-            actionsLink.click(FileBrowser.onActionsClick);
-            actionsLink.data('file-name', filename);
-            actionsLink.data('file', file);
-
-            item.appendTo(renderTarget);
+        } else {
+            var emptyItem = $('#emptyTemplate').clone();
+            emptyItem.appendTo(renderTarget);
         }
 
         FileBrowser.setPath(path);

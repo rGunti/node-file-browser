@@ -47,3 +47,9 @@ samp.break-all {
 nav .button-collapse {
     margin: 0;
 }
+.toast {
+    word-break: normal !important;
+}
+.file-browser {
+    margin-bottom: 50px;
+}
