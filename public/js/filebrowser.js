@@ -91,7 +91,7 @@ const FileBrowser = {
         renderTarget.empty();
 
         if (res.fileCount >= 1) {
-            var keys = Object.keys(res.files).sort();
+            var keys = Object.keys(res.files).sort(function(a,b) { return a.toLowerCase().localeCompare(b.toLowerCase()) });
             for (var i in keys) {
                 var filename = keys[i];
                 var file = res.files[filename];
@@ -112,16 +112,28 @@ const FileBrowser = {
                     $('.meta', item).text(filesize(file.size || 0));
                 }
 
-                var fileIcon = $('.file-icon', item);
-                fileIcon.click(FileBrowser.onFileIconClick);
-                fileIcon.data('file-name', filename);
-                fileIcon.data('file', file);
+                //var fileIcon = $('.file-icon', item);
+                //fileIcon.click(FileBrowser.onFileIconClick);
+                //fileIcon.data('file-name', filename);
+                //fileIcon.data('file', file);
 
-                var actionsLink = $('.secondary-content', item);
+                var actionsLink = $('.action-link', item);
                 actionsLink.click(FileBrowser.onActionsClick);
                 actionsLink.data('file-name', filename);
                 actionsLink.data('file', file);
 
+                if (item.hasClass('nav-link')) {
+                    item.attr('href', '#' + FileBrowser.cleanupPath(path + '/' + filename));
+                    item.click(file.isDir ? FileBrowser.onFileIconClick : FileBrowser.onActionsClick);
+                    item.data('file-name', filename);
+                    item.data('file', file);
+                } else {
+                    var navLink = $('.nav-link', item);
+                    navLink.attr('href', '#' + FileBrowser.cleanupPath(path + '/' + filename));
+                    navLink.click(file.isDir ? FileBrowser.onFileIconClick : FileBrowser.onActionsClick);
+                    navLink.data('file-name', filename);
+                    navLink.data('file', file);
+                }
                 item.appendTo(renderTarget);
             }
         } else {
@@ -312,6 +324,11 @@ const FileBrowser = {
                     xhr.abort();
                     Materialize.toast('Upload aborted', 2500);
                     modal.modal('close');
+                    setTimeout(function() {
+                        FileBrowser.deleteFile(
+                            FileBrowser.cleanupPath(FileBrowser.currentPath + '/' + formData.get('uploadFile').name),
+                            true);
+                    }, 1000);
                 });
                 return formData;
             }
@@ -346,7 +363,7 @@ const FileBrowser = {
             progressModal.modal('close');
         }, 1000);
     },
-    deleteFile: function(path) {
+    deleteFile: function(path, silent) {
         let data = {};
         data[FileBrowser.settings.api.args.path] = path;
         simpleAjax(
@@ -354,10 +371,12 @@ const FileBrowser = {
             FileBrowser.settings.api.url.delete[1],
             data,
             function(res) {
+                if (silent) return;
                 FileBrowser.navigateTo(FileBrowser.currentPath);
                 Materialize.toast('File deleted.', 2500);
                 $('#processingModal').modal('close');
             }, function(e) {
+                if (silent) return;
                 var d = e.response;
                 if (d) {
                     if (d.ok) {

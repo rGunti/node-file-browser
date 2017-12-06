@@ -1,5 +1,5 @@
-<ul class="collection file-browser" id="renderTarget">
-</ul>
+<div class="collection file-browser" id="renderTarget">
+</div>
 
 <!-- Floating Button -->
 <div class="fixed-action-btn">
@@ -21,39 +21,28 @@
 </div>
 
 <!-- Templates -->
-<ul class="collection hidden">
-    <li class="collection-item avatar" id="fileTemplate">
-        <a href="#!" class="file-icon">
-            <i class="circle material-icons indigo">insert_drive_file</i>
-        </a>
+<div class="collection hidden">
+    <a class="collection-item indigo-text nav-link" id="fileTemplate">
+        <i class="material-icons left">insert_drive_file</i>
         <span class="title truncate">[[__title__]]</span>
-        <span class="meta">[[__size__]]</span>
-
-        <a href="#!" class="secondary-content indigo-text">
-            <i class="material-icons">more_horiz</i>
+    </a>
+    <div class="collection-item row" id="folderTemplate">
+        <a class="col s10 indigo-text text-darken-4 nav-link">
+            <i class="material-icons left">folder</i>
+            <span class="title truncate">[[__title__]]</span>
         </a>
-    </li>
-    <li class="collection-item avatar" id="folderTemplate">
-        <a href="#!" class="file-icon">
-            <i class="circle material-icons indigo darken-4">folder</i>
+        <a class="col s2 action-link">
+            <i class="material-icons left">more_verti</i>
         </a>
+    </div>
+    <a class="collection-item red-text text-darken-2" id="inaccessibleTemplate">
+        <i class="material-icons left">clear</i>
         <span class="title truncate">[[__title__]]</span>
-
-        <a href="#!" class="secondary-content indigo-text">
-            <i class="material-icons">more_horiz</i>
-        </a>
-    </li>
-    <li class="collection-item avatar" id="inaccessibleTemplate">
-        <a href="#!" class="file-icon">
-            <i class="circle material-icons red darken-2">clear</i>
-        </a>
-        <span class="title truncate">[[__title__]]</span>
-        <p class="meta">[[__error_info__]]</p>
-    </li>
-    <li class="collection-item center-align" id="emptyTemplate">
+    </a>
+    <a class="collection-item green-text center-align" id="emptyTemplate">
         <span class="title">No items found</span>
-    </li>
-</ul>
+    </a>
+</div>
 
 <!-- Modals -->
 <form id="createFolderForm">

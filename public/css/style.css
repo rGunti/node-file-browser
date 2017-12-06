@@ -53,3 +53,6 @@ nav .button-collapse {
 .file-browser {
     margin-bottom: 50px;
 }
+div.collection div.collection-item {
+    height: 42px !important;
+}
