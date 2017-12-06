@@ -25,11 +25,14 @@ const FileBrowser = {
                 createDir: ['/api/filebrowser/create-dir', 'post'],
                 upload: ['/api/filebrowser/upload', 'post'],
                 download: ['/api/filebrowser/download', 'get'],
-                delete: ['/api/filebrowser/delete', 'delete']
+                delete: ['/api/filebrowser/delete', 'delete'],
+                rename: ['/api/filebrowser/rename', 'post']
             },
             args: {
                 path: 'path',
-                newDirName: 'newDirName'
+                newDirName: 'newDirName',
+                renameOldName: 'oldName',
+                renameNewName: 'newName'
             }
         }
     },
@@ -178,6 +181,14 @@ const FileBrowser = {
             case 'file-download':
                 FileBrowser.downloadFile(completePath);
                 aboutActionsModal.modal('close');
+                break;
+            case 'file-rename':
+                var renameModal = $('#fileRenameModal');
+                $('.file-name', renameModal).text(fileName);
+                $('#fileRenameOldName').val(fileName);
+                $('#fileRenameNewName').val(fileName);
+                renameModal.modal('open');
+                $('#fileRenameNewName').focus();
                 break;
             case 'file-delete':
                 var deleteModal = $('#fileDeleteModal');
@@ -354,6 +365,42 @@ const FileBrowser = {
                 $('#processingModal').modal('close');
             }
         );
+    },
+    renameFile: function(oldName, newName) {
+        let data = {};
+        data[FileBrowser.settings.api.args.path] = FileBrowser.currentPath;
+        data[FileBrowser.settings.api.args.renameOldName] = oldName;
+        data[FileBrowser.settings.api.args.renameNewName] = newName;
+        simpleAjax(
+            FileBrowser.settings.api.url.rename[0],
+            FileBrowser.settings.api.url.rename[1],
+            data,
+            function(res) {
+                FileBrowser.navigateTo(FileBrowser.currentPath);
+                Materialize.toast('File renamed.', 2500);
+                $('#processingModal').modal('close');
+            }, function(e) {
+                var d = e.response;
+                if (d) {
+                    if (d.ok) {
+                        Materialize.toast('File renamed.', 2500);
+                    } else if (d.error) {
+                        var error = 'File could not be renamed.';
+                        switch (d.error.code) {
+                            case 'EPERM':
+                                error = 'Renaming is not permitted.';
+                                break;
+                        }
+                        Materialize.toast(error, 2500);
+                    } else {
+                        Materialize.toast('The file could not be renamed!', 2500);
+                    }
+                } else {
+                    Materialize.toast('The file could not be renamed!', 2500);
+                }
+                $('#processingModal').modal('close');
+            }
+        );
     }
 };
 
@@ -394,6 +441,34 @@ $(document).ready(function() {
         $('#processingModal').modal('open');
         setTimeout(function() {
             FileBrowser.deleteFile($('#fileDeletePath').val());
+        }, 500);
+    });
+    $('#fileRenameForm').submit(function(e) {
+        e.preventDefault();
+        var oldName = $('#fileRenameOldName').val();
+        var newName = $('#fileRenameNewName').val();
+
+        if (oldName && newName) {
+            if (oldName === newName) {
+                Materialize.toast('New name must not match old name!', 2500);
+                $('#fileRenameNewName').focus();
+                return;
+            } else if (!newName.match(FILENAME_VALID)) {
+                Materialize.toast('New name is not valid!', 2500);
+                $('#fileRenameNewName').focus();
+                return;
+            }
+        } else {
+            Materialize.toast('Please enter a file name to continue.', 2500);
+            $('#fileRenameNewName').focus();
+            return;
+        }
+
+        $('#fileActionsModal').modal('close');
+        $('#fileRenameModal').modal('close');
+        $('#processingModal').modal('open');
+        setTimeout(function() {
+            FileBrowser.renameFile(oldName, newName);
         }, 500);
     });
     FileBrowser.init();

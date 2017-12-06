@@ -153,4 +153,27 @@ router.delete('/delete', (req, res) => {
     }
 });
 
+router.post('/rename', (req, res) => {
+    let filePath = req.body.path;
+    let oldName = req.body.oldName;
+    let newName = req.body.newName;
+
+    if (filePath && oldName && newName) {
+        filePath = path.join(ROOT, req.body.path);
+        oldName = path.join(filePath, oldName);
+        newName = path.join(filePath, newName);
+        fs.stat(oldName, (err, stats) => {
+            if (err) {
+                sendSimpleAnswer(res, { code: 'ENOENT', message: 'File not found' }, null, 404);
+            } else {
+                fs.rename(oldName, newName, (err) => {
+                    sendSimpleAnswer(res, err);
+                });
+            }
+        });
+    } else {
+        sendSimpleAnswer(res, { code: 'EPERM', message: 'No file or filename specified' })
+    }
+});
+
 module.exports = router;

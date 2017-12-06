@@ -165,7 +165,7 @@
     <div class="modal-content">
         <dl>
             <dt>Name:</dt>
-            <dd class="file-name">[[__name__]]</dd>
+            <dd class="file-name truncate">[[__name__]]</dd>
 
             <dt class="hidden-on-folder">Size:</dt>
             <dd class="hidden-on-folder file-size">[[__size__]]</dd>
@@ -174,26 +174,20 @@
             <dd class="file-birthdate">[[__birthdate__]]</dd>
             <dd class="file-mdate">[[__mdate__]]</dd>
         </dl>
-        <ul class="collection">
-            <li class="collection-item hidden-on-folder">
-                <a href="#!" class="file-advanced-action" data-action="file-download">
-                    <i class="material-icons left">file_download</i>
-                    Download File
-                </a>
-            </li>
-            <li class="collection-item">
-                <a href="#!" class="file-advanced-action" data-action="file-rename">
-                    <i class="material-icons left">edit</i>
-                    Rename
-                </a>
-            </li>
-            <li class="collection-item">
-                <a href="#!" class="file-advanced-action" data-action="file-delete">
-                    <i class="material-icons left">delete</i>
-                    Delete
-                </a>
-            </li>
-        </ul>
+        <div class="collection">
+            <a href="#" class="collection-item hidden-on-folder file-advanced-action" data-action="file-download">
+                <i class="material-icons left">file_download</i>
+                Download File
+            </a>
+            <a href="#" class="collection-item file-advanced-action" data-action="file-rename">
+                <i class="material-icons left">edit</i>
+                Rename
+            </a>
+            <a href="#" class="collection-item file-advanced-action" data-action="file-delete">
+                <i class="material-icons left">delete</i>
+                Delete
+            </a>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
@@ -205,9 +199,9 @@
 <form id="fileDeleteForm">
     <div id="fileDeleteModal" class="modal bottom-sheet">
         <div class="modal-content">
-            <h4 class="truncate">Delete <span class="file-name"></span></h4>
+            <h4 class="truncate">Delete <span class="file-name">[[__filename__]]</span></h4>
             <p>
-                Would you really like to delete <b class="file-name">[[__filename__]]</b>?
+                Would you really like to delete <b class="file-name truncate">[[__filename__]]</b>?
             </p>
             <p class="show-on-folder">
                 This action deletes this folder and all of its content.
@@ -223,6 +217,30 @@
             </button>
             <button type="submit" class="btn waves-effect waves-light red modal-button-confirm">
                 Yes
+            </button>
+        </div>
+    </div>
+</form>
+
+<form id="fileRenameForm">
+    <div id="fileRenameModal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h4 class="truncate">Rename <span class="file-name">[[__filename__]]</span></h4>
+            <p>
+                Enter a new name for <b class="file-name truncate">[[__filename__]]</b>
+            </p>
+            <div class="input-field">
+                <input type="text" id="fileRenameNewName" value="[[__filename__]]" class="validate">
+                <label for="fileRenameNewName">File Name</label>
+            </div>
+            <input type="hidden" id="fileRenameOldName">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-flat modal-close waves-effect waves-light">
+                Cancel
+            </button>
+            <button type="submit" class="btn waves-effect waves-light indigo modal-button-confirm">
+                Rename
             </button>
         </div>
     </div>
